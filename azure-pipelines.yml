@@ -9,38 +9,79 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
+  
+# TODO: change jobs to native azure .net tasks
+stages:
+#- stage: powershell
+#  jobs:
+#  - job: test
+#    displayName: test
+#    steps:
+#    - task: PowerShell@2
+#      displayName: 'Run a multi-line script'  
+#      inputs:
+#        targetType: filePath
+#        filePath: $(Build.SourcesDirectory)/build/test.ps1        
+#
+#  - job: build
+#    dependsOn: test
+#    condition: succeeded()
+#    displayName: build
+#    steps:
+#    - task: PowerShell@2
+#      displayName: 'Run a multi-line script'  
+#      inputs:
+#        targetType: filePath
+#        filePath: $(Build.SourcesDirectory)/build/build.ps1
+#        arguments: BuildVersionNumber=$(Version.Revision)
+#        
+#  - job: deploy
+#    dependsOn: build
+#    condition: succeeded()
+#    displayName: deploy
+#    steps:
+#    - task: PowerShell@2
+#      enabled: false
+#      displayName: 'Run a multi-line script'  
+#      inputs:
+#        targetType: filePath
+#        filePath: $(Build.SourcesDirectory)/build/build.ps1
+#        arguments: BuildVersionNumber=$(Version.Revision)
 
-jobs:
-- job: test
-  displayName: test
-  steps:
-  - task: PowerShell@2
-    displayName: 'Run a multi-line script'  
-    inputs:
-      targetType: filePath
-      filePath: $(Build.SourcesDirectory)/build/test.ps1        
+- stage: nettasks
+  jobs:
+  - job: test
+    steps:
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'test'
+          projects: 'test/**/*.csproj'
 
-- job: build
-  dependsOn: test
-  condition: succeeded()
-  displayName: build
-  steps:
-  - task: PowerShell@2
-    displayName: 'Run a multi-line script'  
-    inputs:
-      targetType: filePath
-      filePath: $(Build.SourcesDirectory)/build/build.ps1
-      arguments: BuildVersionNumber=$(Version.Revision)
-      
-- job: deploy
-  dependsOn: build
-  condition: succeeded()
-  displayName: deploy
-  steps:
-  - task: PowerShell@2
-    enabled: false
-    displayName: 'Run a multi-line script'  
-    inputs:
-      targetType: filePath
-      filePath: $(Build.SourcesDirectory)/build/build.ps1
-      arguments: BuildVersionNumber=$(Version.Revision)
+  - job: build
+    dependsOn: test
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) # only for pr's
+    steps:
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'build'
+          projects: 'src/**/*.csproj'
+
+  - job: deploy
+    dependsOn: test
+    condition: and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
+    steps:
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'pack'
+          packagesToPack: 'src/**/*.csproj'
+          versioningScheme: 'byBuildNumber'          
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'push'
+          packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: '53b99a77-b93a-4904-8ad0-8004a351c673'
+
+

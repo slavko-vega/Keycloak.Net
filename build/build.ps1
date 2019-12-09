@@ -5,7 +5,7 @@ param (
 
 & dotnet restore --no-cache
 
-foreach ($src in ls $PSScriptRoot/src/*) {
+foreach ($src in ls $PSScriptRoot/../src/*) {
     Push-Location $src
 
 	Write-Output "build: Building & packaging project in $src"
