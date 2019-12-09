@@ -63,7 +63,7 @@ stages:
           command: 'restore'
           projects: 'test/**/*.csproj'
 
-      - task: DotNetCoreCLI@2
+      - task: DotNetCoreCLI@1
         inputs:
           command: 'test'
           projects: 'test/**/*.csproj'
