@@ -31,3 +31,16 @@ jobs:
       targetType: filePath
       filePath: $(Build.SourcesDirectory)/build/build.ps1
       arguments: BuildVersionNumber=$(Version.Revision)
+      
+- job: deploy
+  dependsOn: build
+  condition: succeeded()
+  displayName: deploy
+  steps:
+  - task: PowerShell@2
+    enabled: false
+    displayName: 'Run a multi-line script'  
+    inputs:
+      targetType: filePath
+      filePath: $(Build.SourcesDirectory)/build/build.ps1
+      arguments: BuildVersionNumber=$(Version.Revision)
