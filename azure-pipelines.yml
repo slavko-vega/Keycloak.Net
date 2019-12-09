@@ -1,3 +1,9 @@
+name: Keycloak.Net Client CD
+
+variables:
+  Version.MajorMinor: 0.1
+  Version.Revision: $[counter(variables['Version.MajorMinor'], 0)]
+
 trigger:
 - master
 
@@ -12,7 +18,7 @@ pool:
       displayName: 'Run a multi-line script'  
       inputs:
         targetType: filePath
-        filePath: $(Build.SourcesDirectory)/build/test.ps1
+        filePath: $(Build.SourcesDirectory)/build/test.ps1        
 
   - job: build
     dependsOn: test
@@ -24,3 +30,4 @@ pool:
       inputs:
         targetType: filePath
         filePath: $(Build.SourcesDirectory)/build/build.ps1
+        arguments: BuildVersionNumber=$(Version.Revision)
