@@ -10,7 +10,8 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-- job: test    
+jobs:
+- job: test
   displayName: test
   steps:
   - task: PowerShell@2
