@@ -1,4 +1,4 @@
-name: Keycloak.Net Client CD
+name: Keycloak.Net Client
 
 variables:
   Version.MajorMinor: 0.1
@@ -10,24 +10,23 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-- jobs:
-  - job: test
-    displayName: test
-    steps:
-    - task: PowerShell@2
-      displayName: 'Run a multi-line script'  
-      inputs:
-        targetType: filePath
-        filePath: $(Build.SourcesDirectory)/build/test.ps1        
+- job: test    
+  displayName: test
+  steps:
+  - task: PowerShell@2
+    displayName: 'Run a multi-line script'  
+    inputs:
+      targetType: filePath
+      filePath: $(Build.SourcesDirectory)/build/test.ps1        
 
-  - job: build
-    dependsOn: test
-    condition: succeeded()
-    displayName: build
-    steps:
-    - task: PowerShell@2
-      displayName: 'Run a multi-line script'  
-      inputs:
-        targetType: filePath
-        filePath: $(Build.SourcesDirectory)/build/build.ps1
-        arguments: BuildVersionNumber=$(Version.Revision)
+- job: build
+  dependsOn: test
+  condition: succeeded()
+  displayName: build
+  steps:
+  - task: PowerShell@2
+    displayName: 'Run a multi-line script'  
+    inputs:
+      targetType: filePath
+      filePath: $(Build.SourcesDirectory)/build/build.ps1
+      arguments: BuildVersionNumber=$(Version.Revision)
