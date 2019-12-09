@@ -58,12 +58,12 @@ stages:
           packageType: 'sdk'
           version: '1.1.13'
 
-      #- task: UseDotNet@2
-      #  inputs:
-      #    packageType: 'sdk'
-      #    version: '2.x'
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'restore'
+          projects: 'test/**/*.csproj'
 
-      - task: DotNetCoreCLI@1
+      - task: DotNetCoreCLI@2
         inputs:
           command: 'test'
           projects: 'test/**/*.csproj'
