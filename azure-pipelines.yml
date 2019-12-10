@@ -1,8 +1,8 @@
-name: Keycloak.Net Client
-
 variables:
   Version.MajorMinor: 0.1
   Version.Revision: $[counter(variables['Version.MajorMinor'], 0)]
+
+name: $(Version.Revision) # this sets the build_buildnumber variable
 
 trigger:
 - master
@@ -72,6 +72,12 @@ stages:
     # dependsOn: test
     condition: eq(variables['Build.Reason'], 'PullRequest') # and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) # only for pr's
     steps:
+    
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+          version: '1.1.13'
+
       - task: DotNetCoreCLI@1
         inputs:
           command: 'build'
@@ -82,11 +88,16 @@ stages:
     condition: not(eq(variables['Build.Reason'], 'PullRequest')) # and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
     steps:
 
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+          version: '1.1.13'
+
       - task: DotNetCoreCLI@2
         inputs:
           command: 'pack'
           packagesToPack: 'src/**/*.csproj'
-          versioningScheme: 'byBuildNumber'          
+          versioningScheme: 'byBuildNumber'                
 
       - task: DotNetCoreCLI@2
         inputs:
