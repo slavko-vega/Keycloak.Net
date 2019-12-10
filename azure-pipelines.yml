@@ -1,8 +1,9 @@
 variables:
   Version.MajorMinor: 0.1
   Version.Revision: $[counter(variables['Version.MajorMinor'], 0)]
+  Version.SemverNumber: $(Version.MajorMinor).$(Version.Revision)  
 
-name: $(Version.Revision) # this sets the build_buildnumber variable
+name: $(Version.SemverNumber) # this sets the build_buildnumber variable
 
 trigger:
 - master
@@ -33,7 +34,7 @@ stages:
 #      inputs:
 #        targetType: filePath
 #        filePath: $(Build.SourcesDirectory)/build/build.ps1
-#        arguments: BuildVersionNumber=$(Version.Revision)
+#        arguments: BuildVersionNumber=$(Version.SemverNumber)
 #        
 #  - job: deploy
 #    dependsOn: build
@@ -46,7 +47,7 @@ stages:
 #      inputs:
 #        targetType: filePath
 #        filePath: $(Build.SourcesDirectory)/build/build.ps1
-#        arguments: BuildVersionNumber=$(Version.Revision)
+#        arguments: BuildVersionNumber=$(Version.SemverNumber)
 
 - stage: nettasks
   jobs:
