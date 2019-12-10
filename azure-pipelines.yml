@@ -88,6 +88,10 @@ stages:
     condition: not(eq(variables['Build.Reason'], 'PullRequest')) # and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
     steps:
 
+      - script: |
+          echo $(Version.Revision)
+          echo $(Build.BuildNumber)
+
       - task: UseDotNet@2
         inputs:
           packageType: 'sdk'
@@ -97,7 +101,7 @@ stages:
         inputs:
           command: 'pack'
           packagesToPack: 'src/**/*.csproj'
-          versioningScheme: 'byBuildNumber'                
+          versioningScheme: 'byBuildNumber'          
 
       - task: DotNetCoreCLI@2
         inputs:
