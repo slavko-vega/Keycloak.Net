@@ -3,7 +3,7 @@ variables:
   Version.Revision: $[counter(variables['Version.MajorMinor'], 0)]
   Version.SemverNumber: $(Version.MajorMinor).$(Version.Revision)  
 
-name: $(Version.SemverNumber) # this sets the build_buildnumber variable
+name: $[$(Version.SemverNumber)] # this sets the build_buildnumber variable
 
 trigger:
 - master
@@ -97,6 +97,11 @@ stages:
         inputs:
           packageType: 'sdk'
           version: '1.1.13'
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'restore'
+          projects: 'src/**/*.csproj'
 
       - task: DotNetCoreCLI@2
         inputs:
