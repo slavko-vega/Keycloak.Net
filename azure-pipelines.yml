@@ -3,7 +3,7 @@ variables:
   Version.Revision: $[counter(variables['Version.MajorMinor'], 0)]
   Version.SemverNumber: $(Version.MajorMinor).$(Version.Revision)  
 
-name: $[$(Version.SemverNumber)] # this sets the build_buildnumber variable
+name: $(Version.SemverNumber) # this sets the build_buildnumber variable
 
 trigger:
 - master
