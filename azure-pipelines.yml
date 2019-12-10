@@ -58,7 +58,7 @@ stages:
           packageType: 'sdk'
           version: '1.1.13'
 
-      - task: DotNetCoreCLI@2
+      - task: DotNetCoreCLI@1
         inputs:
           command: 'restore'
           projects: 'test/**/*.csproj'
@@ -69,17 +69,17 @@ stages:
           projects: 'test/**/*.csproj'
 
   - job: build
-    dependsOn: test
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) # only for pr's
+    # dependsOn: test
+    condition: eq(variables['Build.Reason'], 'PullRequest') # and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) # only for pr's
     steps:
-      - task: DotNetCoreCLI@2
+      - task: DotNetCoreCLI@1
         inputs:
           command: 'build'
           projects: 'src/**/*.csproj'
 
   - job: deploy
-    dependsOn: test
-    condition: and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
+    # dependsOn: test
+    condition: not(eq(variables['Build.Reason'], 'PullRequest')) # and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
     steps:
 
       - task: DotNetCoreCLI@2
