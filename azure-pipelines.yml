@@ -11,54 +11,11 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-# TODO: change jobs to native azure .net tasks
 stages:
-#- stage: powershell
-#  jobs:
-#  - job: test
-#    displayName: test
-#    steps:
-#    - task: PowerShell@2
-#      displayName: 'Run a multi-line script'  
-#      inputs:
-#        targetType: filePath
-#        filePath: $(Build.SourcesDirectory)/build/test.ps1        
-#
-#  - job: build
-#    dependsOn: test
-#    condition: succeeded()
-#    displayName: build
-#    steps:
-#    - task: PowerShell@2
-#      displayName: 'Run a multi-line script'  
-#      inputs:
-#        targetType: filePath
-#        filePath: $(Build.SourcesDirectory)/build/build.ps1
-#        arguments: BuildVersionNumber=$(Version.SemverNumber)
-#
-#  - job: deploy
-#    dependsOn: build
-#    condition: succeeded()
-#    displayName: deploy
-#    steps:
-#    - task: PowerShell@2
-#      enabled: false
-#      displayName: 'Run a multi-line script'  
-#      inputs:
-#        targetType: filePath
-#        filePath: $(Build.SourcesDirectory)/build/build.ps1
-#        arguments: BuildVersionNumber=$(Version.SemverNumber)
-
 - stage: nettasks
   jobs:
   - job: test
     steps:
-
-      - task: UseDotNet@2
-        enabled: false
-        inputs:
-          packageType: 'sdk'
-          version: '1.1.13'
 
       - task: DotNetCoreCLI@2
         inputs:
@@ -66,40 +23,25 @@ stages:
           projects: 'test/**/*.csproj'
 
       - task: DotNetCoreCLI@2
+        continueOnError: true
         inputs:
           command: 'test'
           projects: 'test/**/*.csproj'
-
+  
   - job: build
-    # dependsOn: test
-    condition: eq(variables['Build.Reason'], 'PullRequest') # and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) # only for pr's
+    dependsOn: test
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest')) # only for pr's
     steps:
     
-      - task: UseDotNet@2
-        enabled: false
-        inputs:
-          packageType: 'sdk'
-          version: '1.1.13'
-
       - task: DotNetCoreCLI@2
         inputs:
           command: 'build'
           projects: 'src/**/*.csproj'
 
   - job: deploy
-    # dependsOn: test
-    condition: not(eq(variables['Build.Reason'], 'PullRequest')) # and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
+    dependsOn: test
+    condition: and(succeeded(), not(eq(variables['Build.Reason'], 'PullRequest'))) # dont't run for pr's
     steps:
-
-      - script: |
-          echo $(Version.Revision)
-          echo $(Build.BuildNumber)
-
-      - task: UseDotNet@2
-        enabled: false
-        inputs:
-          packageType: 'sdk'
-          version: '1.1.13'
 
       - task: DotNetCoreCLI@2
         inputs:
