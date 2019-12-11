@@ -10,7 +10,7 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
-  
+
 # TODO: change jobs to native azure .net tasks
 stages:
 #- stage: powershell
@@ -35,7 +35,7 @@ stages:
 #        targetType: filePath
 #        filePath: $(Build.SourcesDirectory)/build/build.ps1
 #        arguments: BuildVersionNumber=$(Version.SemverNumber)
-#        
+#
 #  - job: deploy
 #    dependsOn: build
 #    condition: succeeded()
@@ -55,16 +55,17 @@ stages:
     steps:
 
       - task: UseDotNet@2
+        enabled: false
         inputs:
           packageType: 'sdk'
           version: '1.1.13'
 
-      - task: DotNetCoreCLI@1
+      - task: DotNetCoreCLI@2
         inputs:
           command: 'restore'
           projects: 'test/**/*.csproj'
 
-      - task: DotNetCoreCLI@1
+      - task: DotNetCoreCLI@2
         inputs:
           command: 'test'
           projects: 'test/**/*.csproj'
@@ -75,11 +76,12 @@ stages:
     steps:
     
       - task: UseDotNet@2
+        enabled: false
         inputs:
           packageType: 'sdk'
           version: '1.1.13'
 
-      - task: DotNetCoreCLI@1
+      - task: DotNetCoreCLI@2
         inputs:
           command: 'build'
           projects: 'src/**/*.csproj'
@@ -94,6 +96,7 @@ stages:
           echo $(Build.BuildNumber)
 
       - task: UseDotNet@2
+        enabled: false
         inputs:
           packageType: 'sdk'
           version: '1.1.13'
@@ -115,5 +118,3 @@ stages:
           packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
           nuGetFeedType: 'internal'
           publishVstsFeed: '53b99a77-b93a-4904-8ad0-8004a351c673'
-
-
