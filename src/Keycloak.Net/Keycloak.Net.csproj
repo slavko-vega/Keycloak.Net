@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <PackageId>Embrace.Keycloak.Net</PackageId>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Luk Vermeulen</Authors>
@@ -12,7 +13,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>keycloak</PackageTags>
     <PackageIconUrl>https://i.imgur.com/eEjfRLz.jpg?2</PackageIconUrl>
-    <Description>C# client for Keycloak</Description>
+    <Description>Embrace fork of C# client for Keycloak</Description>
   </PropertyGroup>
 
   <ItemGroup>
