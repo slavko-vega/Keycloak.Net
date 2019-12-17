@@ -11,7 +11,6 @@ namespace Keycloak.Net.Tests
         [InlineData("master")]
         public async Task CreateUserAsync(string realm)
         {
-
             var user = new Models.Users.User()
             {
                 UserName = "testun1",
@@ -26,5 +25,13 @@ namespace Keycloak.Net.Tests
             Assert.NotNull(result);
         }
 
+        [Theory]
+        [Trait("Category", "EmbraceTests")]
+        [InlineData("master")]
+        public async Task GetOpenIDConfigurationAsync(string realm)
+        {
+            var result = await _client.GetOpenIDConfigurationAsync(realm);
+            Assert.NotNull(result);
+        }
     }
 }
