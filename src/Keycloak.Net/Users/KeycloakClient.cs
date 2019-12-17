@@ -11,13 +11,16 @@ namespace Keycloak.Net
 {
     public partial class KeycloakClient
     {
-        public async Task<bool> CreateUserAsync(string realm, User user)
+        public async Task<string> CreateUserAsync(string realm, User user)
         {
             var response = await GetBaseUrl(realm)
-                .AppendPathSegment($"/admin/realms/{realm}/users")
-                .PostJsonAsync(user)
-                .ConfigureAwait(false);
-            return response.IsSuccessStatusCode;
+                          .AppendPathSegment($"/admin/realms/{realm}/users")
+                          .PostJsonAsync(user)
+                          .ConfigureAwait(false);
+
+            var locationPathAndQuery = response.Headers.Location.PathAndQuery;
+            var userId = response.IsSuccessStatusCode ? locationPathAndQuery.Substring(locationPathAndQuery.LastIndexOf("/", StringComparison.Ordinal) + 1) : null;
+            return userId;
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync(string realm, bool? briefRepresentation = null, string email = null, int? first = null,

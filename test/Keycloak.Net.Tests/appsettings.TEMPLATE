@@ -1,0 +1,5 @@
+{
+  "url": "<keycloakhost>:<keycloakport>",
+  "userName": "<username>",
+  "password": "<password>",
+}
