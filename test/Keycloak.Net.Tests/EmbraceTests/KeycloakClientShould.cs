@@ -22,7 +22,7 @@ namespace Keycloak.Net.Tests
             };
 
             var result = await _client.CreateUserAsync(realm, user);
-            Assert.NotNull(result);
+            Assert.False(string.IsNullOrWhiteSpace(result), "Created user ID not returned");
         }
 
         [Theory]
@@ -31,7 +31,7 @@ namespace Keycloak.Net.Tests
         public async Task GetOpenIDConfigurationAsync(string realm)
         {
             var result = await _client.GetOpenIDConfigurationAsync(realm);
-            Assert.NotNull(result);
+            Assert.EndsWith(realm, result.Issuer.ToString());
         }
     }
 }
