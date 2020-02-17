@@ -28,6 +28,22 @@ namespace Keycloak.Net.Tests
         [Theory]
         [Trait("Category", "EmbraceTests")]
         [InlineData("master")]
+        public async Task CreateClientAsync(string realm)
+        {
+            var client = new Models.Clients.Client()
+            {
+                Name = "testclient1",
+                Enabled = true,
+                BaseUrl = "baseurl1",
+            };
+
+            var result = await _client.CreateClientAsync(realm, client);
+            Assert.False(string.IsNullOrWhiteSpace(result), "Created client ID not returned");
+        }
+
+        [Theory]
+        [Trait("Category", "EmbraceTests")]
+        [InlineData("master")]
         public async Task GetOpenIDConfigurationAsync(string realm)
         {
             var result = await _client.GetOpenIDConfigurationAsync(realm);
