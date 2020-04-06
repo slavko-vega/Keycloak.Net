@@ -29,7 +29,7 @@ namespace Keycloak.Net
         private readonly string _userName;
         private readonly string _password;
         private readonly Func<string> _getToken;
-        private readonly ForwardedHttpHeaders _forwardedHttpHeaders;
+        private readonly Func<ForwardedHttpHeaders> _getForwardedHttpHeaders;
 
         private KeycloakClient(string url)
         {
@@ -52,19 +52,19 @@ namespace Keycloak.Net
         public KeycloakClient(string url, string userName, string password, ForwardedHttpHeaders forwardedHttpHeaders)
             : this(url, userName, password)
         {
-            _forwardedHttpHeaders = forwardedHttpHeaders;
+            _getForwardedHttpHeaders = () => forwardedHttpHeaders;
         }
 
-        public KeycloakClient(string url, Func<string> getToken, ForwardedHttpHeaders forwardedHttpHeaders)
+        public KeycloakClient(string url, Func<string> getToken, Func<ForwardedHttpHeaders> getForwardedHttpHeaders)
             : this(url, getToken)
         {
-            _forwardedHttpHeaders = forwardedHttpHeaders;
+            _getForwardedHttpHeaders = getForwardedHttpHeaders;
         }
 
         private IFlurlRequest GetBaseUrl(string authenticationRealm) => new Url(_url)
             .AppendPathSegment("/auth")
             .ConfigureRequest(settings => settings.JsonSerializer = s_serializer)
             .WithAuthentication(_getToken, _url, authenticationRealm, _userName, _password)
-            .WithForwardedHttpHeaders(_forwardedHttpHeaders);
+            .WithForwardedHttpHeaders(_getForwardedHttpHeaders());
     }
 }
