@@ -4,6 +4,7 @@ using Flurl.Http;
 using Flurl.Http.Configuration;
 using Keycloak.Net.Common.Extensions;
 using Keycloak.Net.Services;
+using Keycloak.Net.Services.Default;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -58,6 +59,15 @@ namespace Keycloak.Net
             : this(urlService, tokenService)
         {
             _forwardedHttpHeadersService = forwardedHttpHeadersService;
+        }
+
+        [Obsolete]
+        public KeycloakClient(
+            string url,
+            Func<string> getToken,
+            ForwardedHttpHeaders forwardedHttpHeaders)
+            : this(new UrlService(url), new TokenService(getToken), new ForwardedHttpHeadersService(forwardedHttpHeaders))
+        {
         }
 
 
